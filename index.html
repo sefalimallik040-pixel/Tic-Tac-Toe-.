@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+<title>Tic Tac Toe Ultimate</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    color:white;
+    background:
+    radial-gradient(circle at 15% 12%,#5524ad 0%,transparent 34%),
+    radial-gradient(circle at 88% 88%,#008ba5 0%,transparent 34%),
+    linear-gradient(135deg,#050512,#11162d);
+}
+
+button{
+    border:0;
+    color:white;
+    font-family:Arial,sans-serif;
+}
+
+.screen{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:none;
+    overflow:hidden;
+}
+
+.screen.active{
+    display:flex;
+}
+
+.center{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:10px;
+}
+
+.container{
+    width:min(500px,100%);
+}
+
+
+/* ================= SPLASH ================= */
+
+.splash{
+    width:100%;
+    text-align:center;
+}
+
+.mainTitle{
+    font-size:clamp(48px,15vw,78px);
+    line-height:.84;
+    font-weight:1000;
+    letter-spacing:3px;
+    text-shadow:
+    0 0 10px #00eaff,
+    0 0 25px #00eaff,
+    0 0 45px #704cff;
+}
+
+.symbols{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:18px;
+    margin:24px 0;
+}
+
+.symbol{
+    width:65px;
+    height:65px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:20px;
+    background:#ffffff08;
+    font-size:50px;
+    font-weight:1000;
+}
+
+.symbolX{
+    color:#00eaff;
+    border:2px solid #00eaff;
+    box-shadow:0 0 22px #00eaff;
+}
+
+.symbolO{
+    color:#ff55dc;
+    border:2px solid #ff55dc;
+    box-shadow:0 0 22px #ff55dc;
+}
+
+.loading{
+    width:min(340px,90%);
+    margin:auto;
+}
+
+.loadingText{
+    font-size:11px;
+    margin-bottom:6px;
+    letter-spacing:1px;
+}
+
+.loadingTrack{
+    height:8px;
+    border-radius:20px;
+    overflow:hidden;
+    background:#ffffff15;
+}
+
+.loadingBar{
+    width:0;
+    height:100%;
+    background:linear-gradient(
+        90deg,
+        #00eaff,
+        #704cff,
+        #ff4fd8
+    );
+}
+
+.loadingPercent{
+    margin-top:6px;
+    color:#aab5d7;
+    font-size:10px;
+}
+
+.play{
+    display:none;
+    margin:20px auto 0;
+    padding:13px 50px;
+    border-radius:50px;
+    font-size:18px;
+    font-weight:1000;
+    background:linear-gradient(
+        90deg,
+        #ff3da5,
+        #704cff,
+        #00cbed
+    );
+    box-shadow:0 0 25px #536dff;
+}
+
+.play.show{
+    display:block;
+}
+
+
+/* ================= HOME ================= */
+
+.logo{
+    text-align:center;
+    font-size:29px;
+    font-weight:1000;
+    text-shadow:0 0 18px #00eaff;
+}
+
+.sublogo{
+    text-align:center;
+    margin:4px 0 13px;
+    color:#aab5d8;
+    font-size:9px;
+    letter-spacing:3px;
+}
+
+.homeCard{
+    padding:12px;
+    border-radius:22px;
+    background:#ffffff09;
+    border:1px solid #ffffff17;
+}
+
+.menu{
+    width:100%;
+    min-height:62px;
+    margin-bottom:8px;
+    padding:10px 14px;
+    text-align:left;
+    border-radius:15px;
+    background:#ffffff0b;
+    border:1px solid #ffffff0d;
+}
+
+.menu:last-child{
+    margin-bottom:0;
+}
+
+.menu:active{
+    transform:scale(.98);
+}
+
+.menuTitle{
+    font-size:16px;
+    font-weight:1000;
+}
+
+.menuDesc{
+    margin-top:4px;
+    color:#aeb7d5;
+    font-size:10px;
+}
+
+.rank{
+    margin-top:9px;
+    padding:9px;
+    text-align:center;
+    border-radius:18px;
+    background:#ffffff08;
+    border:1px solid #ffffff13;
+}
+
+.rankIcon{
+    font-size:26px;
+}
+
+.rankName{
+    font-size:15px;
+    font-weight:1000;
+}
+
+.rankXP{
+    color:#9da8cb;
+    font-size:9px;
+}
+
+
+/* ================= TOP HOME BUTTON ================= */
+
+.backHome{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    padding:8px 12px;
+    border-radius:15px 15px 15px 5px;
+    background:linear-gradient(
+        135deg,
+        #704cff,
+        #45258a
+    );
+    border:2px solid #ffffff16;
+    box-shadow:0 4px 12px #00000035;
+    font-size:10px;
+    font-weight:900;
+}
+
+.backHome:active{
+    transform:scale(.95);
+}
+
+.house{
+    font-size:16px;
+}
+
+
+/* ================= DIFFICULTY ================= */
+
+.diffContainer{
+    width:min(520px,100%);
+}
+
+.diffTop{
+    margin-bottom:8px;
+}
+
+.diffHeading{
+    text-align:center;
+    font-size:25px;
+    font-weight:1000;
+}
+
+.diffHint{
+    margin:3px 0 9px;
+    text-align:center;
+    color:#aeb7d5;
+    font-size:10px;
+}
+
+.diffList{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.diff{
+    width:100%;
+    padding:8px 10px;
+    text-align:left;
+    border-radius:15px;
+    background:#ffffff0a;
+    border:1px solid #ffffff13;
+}
+
+.diff:active{
+    transform:scale(.985);
+}
+
+.diffRow{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.diffIcon{
+    width:36px;
+    height:36px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:11px;
+    font-size:18px;
+    background:linear-gradient(
+        135deg,
+        #704cff,
+        #00cbed
+    );
+}
+
+.diffName{
+    font-size:14px;
+    font-weight:1000;
+}
+
+.diffLevel{
+    margin-top:2px;
+    color:#8f9abd;
+    font-size:8px;
+}
+
+.definition{
+    padding-left:45px;
+    margin-top:4px;
+    color:#c8cee4;
+    font-size:9px;
+    line-height:1.15;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+
+/* ================= GAME ================= */
+
+.gameCenter{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:7px;
+}
+
+.gameContainer{
+    width:min(500px,100%);
+}
+
+.gameTop{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:7px;
+    align-items:center;
+    margin-bottom:6px;
+}
+
+.gameTitle{
+    text-align:center;
+    font-size:18px;
+    font-weight:1000;
+}
+
+.mode{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    min-width:50px;
+    padding:7px 9px;
+    border-radius:7px 14px 5px 14px;
+    background:linear-gradient(
+        135deg,
+        #172b55,
+        #087f9b
+    );
+    border:2px solid #00eaff55;
+    box-shadow:0 0 10px #00eaff35;
+    font-size:9px;
+    font-weight:900;
+}
+
+.mode span:first-child{
+    font-size:14px;
+}
+
+.gameCard{
+    width:100%;
+    padding:9px;
+    border-radius:21px;
+    background:#ffffff09;
+    border:1px solid #ffffff17;
+}
+
+.round{
+    margin-bottom:6px;
+    text-align:center;
+    font-size:17px;
+    font-weight:1000;
+}
+
+.score{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:7px;
+}
+
+.scoreBox{
+    min-width:0;
+    padding:6px;
+    text-align:center;
+    border-radius:14px;
+    background:#00000020;
+}
+
+.scoreSymbol{
+    font-size:23px;
+}
+
+.scoreNumber{
+    font-size:20px;
+    font-weight:1000;
+}
+
+.scoreName{
+    font-size:8px;
+}
+
+.status{
+    min-height:25px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:5px 0;
+    text-align:center;
+    font-size:14px;
+    font-weight:1000;
+}
+
+.board{
+    width:min(295px,72vw);
+    height:min(295px,72vw);
+    margin:5px auto 9px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:5px;
+}
+
+.cell{
+    width:100%;
+    aspect-ratio:1;
+    border-radius:13px;
+    background:#ffffff0b;
+    border:1px solid #ffffff14;
+    font-size:clamp(43px,12vw,62px);
+    font-weight:1000;
+}
+
+.cell:active{
+    transform:scale(.94);
+}
+
+.cell.X{
+    color:#00eaff;
+    text-shadow:0 0 12px #00eaff;
+}
+
+.cell.O{
+    color:#ff55d8;
+    text-shadow:0 0 12px #ff55d8;
+}
+
+.cell.win{
+    border:2px solid #ffe33b;
+    background:#ffe33b18;
+    box-shadow:0 0 18px #ffe33b;
+}
+
+.actions{
+    display:flex;
+    justify-content:center;
+    gap:7px;
+}
+
+.action{
+    padding:9px 13px;
+    border-radius:12px;
+    font-size:10px;
+    font-weight:1000;
+    background:linear-gradient(
+        135deg,
+        #674cff,
+        #00c7e9
+    );
+}
+
+.next{
+    background:linear-gradient(
+        135deg,
+        #00a85a,
+        #00bce5
+    );
+}
+
+.hidden{
+    display:none!important;
+}
+
+
+/* ================= DEVELOPER ================= */
+
+.dev{
+    width:min(480px,100%);
+}
+
+.devTop{
+    margin-bottom:10px;
+}
+
+.devCard{
+    padding:24px 14px;
+    text-align:center;
+    border-radius:23px;
+    background:#ffffff09;
+    border:1px solid #ffffff17;
+}
+
+.avatar{
+    width:75px;
+    height:75px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    font-size:34px;
+    background:linear-gradient(
+        135deg,
+        #704cff,
+        #00cbed
+    );
+    box-shadow:0 0 25px #00cbed55;
+}
+
+.developed{
+    margin-top:11px;
+    color:#b5c0df;
+    font-size:10px;
+    letter-spacing:2px;
+    font-weight:900;
+}
+
+.devName{
+    margin-top:4px;
+    color:#62eaff;
+    font-size:22px;
+    font-weight:1000;
+}
+
+.devInfo{
+    margin-top:9px;
+    color:#cbd1e8;
+    font-size:10px;
+    line-height:1.8;
+}
+
+
+/* ================= SMALL SCREEN ================= */
+
+@media(max-height:650px){
+
+    .mainTitle{
+        font-size:46px;
+    }
+
+    .symbols{
+        margin:12px 0;
+    }
+
+    .symbol{
+        width:55px;
+        height:55px;
+        font-size:42px;
+    }
+
+    .diff{
+        padding:5px 8px;
+    }
+
+    .diffIcon{
+        width:32px;
+        height:32px;
+    }
+
+    .definition{
+        font-size:8px;
+    }
+
+    .board{
+        width:min(260px,68vw);
+        height:min(260px,68vw);
+    }
+}
+</style>
+</head>
+
+<body>
+
+
+<!-- ================= SPLASH ================= -->
+
+<section id="splash" class="screen active">
+
+<div class="center">
+
+<div class="splash">
+
+<div class="mainTitle">
+TIC<br>TAC TOE
+</div>
+
+<div class="symbols">
+
+<div class="symbol symbolX">×</div>
+
+<b>VS</b>
+
+<div class="symbol symbolO">○</div>
+
+</div>
+
+<div class="loading">
+
+<div id="loadingText" class="loadingText">
+LOADING GAME
+</div>
+
+<div class="loadingTrack">
+<div id="loadingBar" class="loadingBar"></div>
+</div>
+
+<div id="loadingPercent" class="loadingPercent">
+0%
+</div>
+
+</div>
+
+<button id="play" class="play" onclick="goHome()">
+▶ PLAY
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= HOME ================= -->
+
+<section id="home" class="screen">
+
+<div class="center">
+
+<div class="container">
+
+<div class="logo">
+❌ TIC TAC TOE ⭕
+</div>
+
+<div class="sublogo">
+ULTIMATE EDITION
+</div>
+
+<div class="homeCard">
+
+<button class="menu" onclick="startFriend()">
+
+<div class="menuTitle">
+👥 FRIEND MODE
+</div>
+
+<div class="menuDesc">
+Play with your friend
+</div>
+
+</button>
+
+
+<button class="menu" onclick="openDifficulty()">
+
+<div class="menuTitle">
+🤖 AI MODE
+</div>
+
+<div class="menuDesc">
+Choose your AI difficulty
+</div>
+
+</button>
+
+
+<button class="menu" onclick="openDeveloper()">
+
+<div class="menuTitle">
+👨‍💻 DEVELOPER DETAILS
+</div>
+
+<div class="menuDesc">
+About the developer
+</div>
+
+</button>
+
+</div>
+
+
+<div class="rank">
+
+<div id="rankIcon" class="rankIcon">
+🪵
+</div>
+
+<div id="rankName" class="rankName">
+Plywood
+</div>
+
+<div id="rankXP" class="rankXP">
+0 XP
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= DIFFICULTY ================= -->
+
+<section id="difficulty" class="screen">
+
+<div class="center">
+
+<div class="diffContainer">
+
+<div class="diffTop">
+
+<button class="backHome" onclick="goHome()">
+<span class="house">🏠</span>
+<span>HOME</span>
+</button>
+
+</div>
+
+<div class="diffHeading">
+🤖 AI DIFFICULTY
+</div>
+
+<div class="diffHint">
+Select your challenge
+</div>
+
+
+<div class="diffList">
+
+
+<button class="diff" onclick="startAI(0)">
+
+<div class="diffRow">
+
+<div class="diffIcon">🌱</div>
+
+<div>
+
+<div class="diffName">
+Beginner
+</div>
+
+<div class="diffLevel">
+EASY
+</div>
+
+</div>
+
+</div>
+
+<div class="definition">
+The AI makes random moves most of the time.
+</div>
+
+</button>
+
+
+<button class="diff" onclick="startAI(1)">
+
+<div class="diffRow">
+
+<div class="diffIcon">🟢</div>
+
+<div>
+
+<div class="diffName">
+Intermediate
+</div>
+
+<div class="diffLevel">
+NORMAL
+</div>
+
+</div>
+
+</div>
+
+<div class="definition">
+The AI sometimes blocks your winning moves.
+</div>
+
+</button>
+
+
+<button class="diff" onclick="startAI(2)">
+
+<div class="diffRow">
+
+<div class="diffIcon">🟡</div>
+
+<div>
+
+<div class="diffName">
+Medium
+</div>
+
+<div class="diffLevel">
+CHALLENGING
+</div>
+
+</div>
+
+</div>
+
+<div class="definition">
+The AI plays carefully and creates better moves.
+</div>
+
+</button>
+
+
+<button class="diff" onclick="startAI(3)">
+
+<div class="diffRow">
+
+<div class="diffIcon">🔴</div>
+
+<div>
+
+<div class="diffName">
+Hard
+</div>
+
+<div class="diffLevel">
+VERY HARD
+</div>
+
+</div>
+
+</div>
+
+<div class="definition">
+The AI rarely makes a mistake.
+</div>
+
+</button>
+
+
+<button class="diff" onclick="startAI(4)">
+
+<div class="diffRow">
+
+<div class="diffIcon">🔥</div>
+
+<div>
+
+<div class="diffName">
+Extreme
+</div>
+
+<div class="diffLevel">
+MAXIMUM
+</div>
+
+</div>
+
+</div>
+
+<div class="definition">
+The AI plays optimal moves and is extremely difficult to beat.
+</div>
+
+</button>
+
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= GAME ================= -->
+
+<section id="game" class="screen">
+
+<div class="gameCenter">
+
+<div class="gameContainer">
+
+
+<div class="gameTop">
+
+<button class="backHome" onclick="goHome()">
+<span class="house">🏠</span>
+<span>HOME</span>
+</button>
+
+<div class="gameTitle">
+TIC TAC TOE
+</div>
+
+<div id="mode" class="mode">
+<span>🤖</span>
+<span>AI</span>
+</div>
+
+</div>
+
+
+<div class="gameCard">
+
+
+<div id="round" class="round">
+ROUND 1 / 3
+</div>
+
+
+<div class="score">
+
+<div class="scoreBox">
+
+<div class="scoreSymbol">
+❌
+</div>
+
+<div id="xScore" class="scoreNumber">
+0
+</div>
+
+<div id="xName" class="scoreName">
+You
+</div>
+
+</div>
+
+
+<div class="scoreBox">
+
+<div class="scoreSymbol">
+⭕
+</div>
+
+<div id="oScore" class="scoreNumber">
+0
+</div>
+
+<div id="oName" class="scoreName">
+AI
+</div>
+
+</div>
+
+</div>
+
+
+<div id="status" class="status">
+Your Turn — ❌
+</div>
+
+
+<div id="board" class="board"></div>
+
+
+<div class="actions">
+
+<button
+id="next"
+class="action next hidden"
+onclick="nextRound()">
+▶ NEXT ROUND
+</button>
+
+<button
+class="action"
+onclick="newMatch()">
+🔄 NEW MATCH
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= DEVELOPER ================= -->
+
+<section id="developer" class="screen">
+
+<div class="center">
+
+<div class="dev">
+
+<div class="devTop">
+
+<button class="backHome" onclick="goHome()">
+<span class="house">🏠</span>
+<span>HOME</span>
+</button>
+
+</div>
+
+
+<div class="devCard">
+
+<div class="avatar">
+👨‍💻
+</div>
+
+
+<div class="developed">
+DEVELOPED BY
+</div>
+
+
+<div class="devName">
+SWARUP MALLICK
+</div>
+
+
+<div class="devInfo">
+
+🎓 Class: 7<br>
+
+📚 Section: B<br>
+
+🔢 Roll No.: 37<br>
+
+🏫 PM Shri Jawahar Navodaya Vidyalaya<br><br>
+
+🎮 TIC TAC TOE ULTIMATE
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<script>
+
+/* ================= SCREEN SYSTEM ================= */
+
+function showScreen(id){
+
+document
+.querySelectorAll(".screen")
+.forEach(screen=>{
+screen.classList.remove("active");
+});
+
+document
+.getElementById(id)
+.classList.add("active");
+
+}
+
+
+function goHome(){
+
+updateRank();
+
+showScreen("home");
+
+}
+
+
+/* ================= LOADING ================= */
+
+let loading=0;
+
+const loader=setInterval(()=>{
+
+loading+=2;
+
+document
+.getElementById("loadingBar")
+.style.width=loading+"%";
+
+document
+.getElementById("loadingPercent")
+.textContent=loading+"%";
+
+
+if(loading>=100){
+
+clearInterval(loader);
+
+document
+.getElementById("loadingText")
+.textContent="GAME READY";
+
+document
+.getElementById("play")
+.classList.add("show");
+
+}
+
+},30);
+
+
+/* ================= RANK SYSTEM ================= */
+
+const ranks=[
+
+["Plywood","🪵",0],
+
+["Stone","🪨",100],
+
+["Bronze","🥉",250],
+
+["Silver","🥈",500],
+
+["Gold","🥇",900],
+
+["Diamond","💎",1500],
+
+["Platinum","🔷",2300],
+
+["Master","👑",3500]
+
+];
+
+
+let xp=
+Number(localStorage.getItem("tttXP"))||0;
+
+
+function updateRank(){
+
+let current=ranks[0];
+
+for(const rank of ranks){
+
+if(xp>=rank[2]){
+current=rank;
+}
+
+}
+
+
+document
+.getElementById("rankIcon")
+.textContent=current[1];
+
+document
+.getElementById("rankName")
+.textContent=current[0];
+
+document
+.getElementById("rankXP")
+.textContent=xp+" XP";
+
+}
+
+
+function saveXP(){
+
+localStorage.setItem("tttXP",xp);
+
+updateRank();
+
+}
+
+
+/* ================= OPEN PAGES ================= */
+
+function openDifficulty(){
+
+showScreen("difficulty");
+
+}
+
+
+function openDeveloper(){
+
+showScreen("developer");
+
+}
+
+
+/* ================= GAME VARIABLES ================= */
+
+let mode="ai";
+
+let difficulty=0;
+
+let boardData=[];
+
+let turn="X";
+
+let round=1;
+
+let xWins=0;
+
+let oWins=0;
+
+let draws=0;
+
+let roundFinished=false;
+
+let matchFinished=false;
+
+
+/* ================= FRIEND MODE ================= */
+
+function startFriend(){
+
+mode="friend";
+
+document
+.getElementById("mode")
+.innerHTML=
+"<span>👥</span><span>FRIEND</span>";
+
+document
+.getElementById("xName")
+.textContent="Player 1";
+
+document
+.getElementById("oName")
+.textContent="Player 2";
+
+newMatch();
+
+showScreen("game");
+
+}
+
+
+/* ================= AI MODE ================= */
+
+function startAI(level){
+
+difficulty=level;
+
+mode="ai";
+
+document
+.getElementById("mode")
+.innerHTML=
+"<span>🤖</span><span>AI</span>";
+
+document
+.getElementById("xName")
+.textContent="You";
+
+document
+.getElementById("oName")
+.textContent="AI";
+
+newMatch();
+
+showScreen("game");
+
+}
+
+
+/* ================= NEW MATCH ================= */
+
+function newMatch(){
+
+boardData=[
+"","","",
+"","","",
+"","",""
+];
+
+turn="X";
+
+round=1;
+
+xWins=0;
+
+oWins=0;
+
+draws=0;
+
+roundFinished=false;
+
+matchFinished=false;
+
+document
+.getElementById("round")
+.textContent="ROUND 1 / 3";
+
+document
+.getElementById("next")
+.classList.add("hidden");
+
+document
+.getElementById("status")
+.textContent=
+mode==="ai"
+?"Your Turn — ❌"
+:"❌ Player 1 Turn";
+
+updateScore();
+
+renderBoard();
+
+}
+
+
+/* ================= BOARD ================= */
+
+function renderBoard(){
+
+const board=
+document.getElementById("board");
+
+board.innerHTML="";
+
+
+boardData.forEach((value,index)=>{
+
+const cell=
+document.createElement("button");
+
+cell.className="cell";
+
+
+if(value==="X"){
+
+cell.textContent="×";
+
+cell.classList.add("X");
+
+}
+
+
+if(value==="O"){
+
+cell.textContent="○";
+
+cell.classList.add("O");
+
+}
+
+
+cell.disabled=
+value!==""
+||
+roundFinished
+||
+matchFinished
+||
+(
+mode==="ai" &&
+turn==="O"
+);
+
+
+cell.onclick=()=>{
+makeMove(index);
+};
+
+
+board.appendChild(cell);
+
+});
+
+}
+
+
+/* ================= MAKE MOVE ================= */
+
+function makeMove(index){
+
+if(roundFinished||matchFinished)
+return;
+
+if(boardData[index]!=="")
+return;
+
+boardData[index]=turn;
+
+renderBoard();
+
+checkGame();
+
+
+if(roundFinished||matchFinished)
+return;
+
+
+if(mode==="ai"){
+
+turn="O";
+
+document
+.getElementById("status")
+.textContent="🤖 AI is thinking...";
+
+renderBoard();
+
+setTimeout(aiMove,400);
+
+}
+
+else{
+
+turn=
+turn==="X"
+?"O"
+:"X";
+
+document
+.getElementById("status")
+.textContent=
+turn==="X"
+?"❌ Player 1 Turn"
+:"⭕ Player 2 Turn";
+
+renderBoard();
+
+}
+
+}
+
+
+/* ================= EMPTY CELLS ================= */
+
+function emptySquares(){
+
+return boardData
+.map((value,index)=>
+value===""?index:null
+)
+.filter(index=>index!==null);
+
+}
+
+
+/* ================= WIN LINES ================= */
+
+const winLines=[
+
+[0,1,2],
+
+[3,4,5],
+
+[6,7,8],
+
+[0,3,6],
+
+[1,4,7],
+
+[2,5,8],
+
+[0,4,8],
+
+[2,4,6]
+
+];
+
+
+function hasWinner(player){
+
+return winLines.some(line=>
+line.every(index=>
+boardData[index]===player
+)
+);
+
+}
+
+
+function winningLine(player){
+
+return winLines.find(line=>
+line.every(index=>
+boardData[index]===player
+)
+);
+
+}
+
+
+/* ================= RANDOM AI ================= */
+
+function randomMove(){
+
+const empty=emptySquares();
+
+if(!empty.length)
+return -1;
+
+return empty[
+Math.floor(
+Math.random()*empty.length
+)
+];
+
+}
+
+
+/* ================= SMART AI ================= */
+
+function smartMove(){
+
+for(const index of emptySquares()){
+
+boardData[index]="O";
+
+if(hasWinner("O")){
+
+boardData[index]="";
+
+return index;
+
+}
+
+boardData[index]="";
+
+}
+
+
+for(const index of emptySquares()){
+
+boardData[index]="X";
+
+if(hasWinner("X")){
+
+boardData[index]="";
+
+return index;
+
+}
+
+boardData[index]="";
+
+}
+
+
+if(boardData[4]==="")
+r
